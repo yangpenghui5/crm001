@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxx.crm001.dao.SaleChanceDao">
+    <select id="selectList" parameterType="SaleChanceVo" resultType="SaleChamce">
+        select t.*
+        from t_sale_chance t
+        <where>
+            <if test="createMan!=null and ''!=createMan">
+                and t.create_man like '%${createMan}%'
+            </if>
+            <if test="state!=null and ''!=state">
+                and t.state = #{state}
+            </if>
+        </where>
+    </select>
+</mapper>

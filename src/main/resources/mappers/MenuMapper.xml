@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxx.crm001.dao.MenuDao">
+
+    <resultMap type="Menu" id="selectListMap">
+        <id column="pId" property="id"/>
+        <result column="pMenuName" property="menuName"/>
+        <result column="pPid" property="pid"/>
+
+
+        <collection property="list" javaType="List" ofType="Menu">
+            <id column="sId" property="id"/>
+            <result column="sMenuName" property="menuName"/>
+            <result column="sPid" property="pid"/>
+        </collection>
+
+    </resultMap>
+    <select id="selectList" resultMap="selectListMap">
+        select t1.id as pId,
+                t1.menu_name as pMenuName,
+                t1.pid as pPid,
+                t2.id as sId,
+                t2.menu_name as sMenuName,
+                t2.pid as sPid
+            from r_menu t1
+            left join r_menu t2 on t1.id = t2.pid
+        where
+            t1.pid = 0
+     </select>
+
+    <select id="queryMenuById" parameterType="int" resultType="Menu">
+        select rm.*
+            from r_user t
+            left join r_user_role rur on t.id = rur.user_id
+            left join r_role rr on rur.role_id = rr.id
+            left join r_role_menu rrm on rur.role_id = rrm.role_id
+            left join r_menu rm on rrm.menu_id = rm.id
+        where t.id = #{id}
+    </select>
+
+
+    <delete id="deleteUserRole" parameterType="String">
+        delete from r_user_role
+        where
+        user_id = #{id}
+    </delete>
+
+    <insert id="insertUserRole">
+        insert into r_user_role
+        (user_id, role_id)
+        values
+        <foreach collection="array" item="i" separator=",">
+            (#{userId},#{i})
+        </foreach>
+    </insert>
+
+    <delete id="deleteRoleMenu" parameterType="String">
+        delete from r_role_menu
+        where
+        role_id = #{roleId}
+    </delete>
+    <insert id="insertRoleMenu" parameterType="RoleMenu">
+        insert into r_role_menu
+        (role_id, menu_id)
+        values
+        <foreach collection="list" item="i" separator=",">
+         (#{roleId},#{menuId})
+        </foreach>
+    </insert>
+</mapper>
